@@ -6,7 +6,7 @@
 /*   By: irazafim <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:13:06 by irazafim          #+#    #+#             */
-/*   Updated: 2024/06/13 15:13:09 by irazafim         ###   ########.fr       */
+/*   Updated: 2024/06/27 11:09:36 by irazafim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,14 @@ int handle_key(int keycode, void *param)
 	return 0;
 }
 
-
-
 int main()
 {
 	void 	*mlx;
 	void *mlx_win;
 	t_data	img;
 	int file;
-	char buf[10000];
+	char buf[1000];
+	int i = 0;
 	
 	mlx = mlx_init();
 	if (!mlx)
@@ -47,15 +46,28 @@ int main()
 	mlx_key_hook(mlx_win, handle_key, NULL);
 	
 	file = open("carte.ber", O_RDONLY);
-	int byte_read = read(file, buf, sizeof(buf) - 1);
+	int byte_read = 10;
+	while (read(file, buf, 10) != 0)
+	{
+		if(*buf == '\n')
+			i++;
+	}
+	printf("%d >> lignes\n", i);
+		
 	if(byte_read < 0)
 	{
 		perror("error reading file");
 		close(file);
 		return 1;
 	}
-	for(int i = 0;i < sizeof(buf) - 1; i++)
-		printf("%s", buf[i]);
+	
+	i = 0;
+	while(buf[i])
+	{
+		printf("%c", buf[i]);
+		i++;
+	}
+
 	img.img = mlx_new_image(mlx, 720, 400);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 	for(int i = 0; i < 61; i++)
